@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7,30 +8,38 @@ metadata:
 spec:
   replicas: 2
   revisionHistoryLimit: 5
+
   selector:
     matchLabels:
       app: webapp
+
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1          # may create 1 extra pod during update
-      maxUnavailable: 0    # never drop below 2 serving pods = zero downtime
+      maxSurge: 1
+      maxUnavailable: 0
+
   template:
     metadata:
       labels:
         app: webapp
+
     spec:
       containers:
         - name: webapp
-          image: adwaitnamjoshi/ci-cd-k8s-app:v1   # e.g. latest or v1
+          image: adwaitnamjoshi/ci-cd-kubernetes-project:v2
+          imagePullPolicy: Always
+
           ports:
             - containerPort: 5000
-          readinessProbe:          # a pod gets traffic only when it responds
+
+          readinessProbe:
             httpGet:
               path: /
               port: 5000
             initialDelaySeconds: 3
             periodSeconds: 5
+
           resources:
             requests:
               cpu: 50m
